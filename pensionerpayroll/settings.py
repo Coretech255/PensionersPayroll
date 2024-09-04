@@ -44,9 +44,10 @@ INSTALLED_APPS = [
 
     'users',
     'payroll',
-    'notifications',
+    #'notifications',
     'administrations',
     'pensioners',
+
 ]
 
 MIDDLEWARE = [
@@ -184,4 +185,7 @@ JAZZMIN_SETTINGS = {
         "notifications.Alert": "fas fa-exclamation-triangle",
         "administrations.PensionScheme": "fas fa-chart-line",
     },
+
+    # List of apps (and/or models) to base side menu ordering off of (does not need to contain all apps/models)
+    "order_with_respect_to": ["pensioners", "payroll", "administrations", "auth"],
 }

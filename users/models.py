@@ -7,7 +7,7 @@ class CustomUser(AbstractUser):
         ('pensioner', 'Pensioner'),
         ('payroll_officer', 'Payroll Officer'),
     )
-    role = models.CharField(max_length=20, choices=USER_ROLES, default='pensioner')
+    role = models.CharField(max_length=20, choices=USER_ROLES, default='admin')
 
     def __str__(self):
         return f"{self.username} ({self.role})"

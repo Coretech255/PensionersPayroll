@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models import CustomUser, Profile
 from django.contrib.auth.admin import UserAdmin
 
+
 class CustomUserAdmin(UserAdmin):
     fieldsets = UserAdmin.fieldsets + (
         (None, {'fields': ('role',)}),
