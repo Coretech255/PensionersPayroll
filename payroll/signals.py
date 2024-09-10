@@ -4,6 +4,7 @@ from django.dispatch import receiver
 from django.utils.timezone import now
 from .models import PaymentSchedule, Payroll, Deduction
 from django.db.models import Sum
+from decimal import Decimal
 
 @receiver(post_save, sender=PaymentSchedule)
 def generate_payroll(sender, instance, **kwargs):
@@ -24,16 +25,19 @@ def generate_payroll(sender, instance, **kwargs):
         instance.save()
 
         # Recalculate total_deductions and net_salary
-        update_payroll_totals(payroll)
+        # Trigger the update_payroll_totals signal
+        post_save.send(sender=Deduction, instance=None, payroll=payroll)
 
 @receiver(post_save, sender=Deduction)
 def update_payroll_totals(sender, instance, **kwargs):
+    if not instance:  # This is a special case when called directly
+        return
     # Get the related Payroll instance
     payroll = instance.payroll
     # Calculate total deductions for the related Payroll
     total_deductions = Deduction.objects.filter(payroll=payroll).aggregate(total=Sum('amount'))['total'] or 0
     payroll.total_deductions = total_deductions
-    payroll.net_salary = payroll.basic_salary - total_deductions
+    payroll.net_salary = Decimal(payroll.basic_salary) - total_deductions
     payroll.save()
 
 @receiver(post_save, sender=Payroll)
